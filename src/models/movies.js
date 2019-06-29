@@ -83,9 +83,8 @@ const updatedData = {
 const deleteMovieById = function deleteMovieById(Id) {
   return new Promise((resolve, reject) => {
     con.query(`DELETE FROM moviesData WHERE moviesData.Id = ${Id}`, (error, result) => {
-      if (error) throw error;
-      console.log(result);
-      resolve();
+      if (error) reject(error);
+      resolve(result);
     });
   });
 };

@@ -181,7 +181,7 @@ const main = async function main() {
   }
 };
 
-// main();
+main();
 
 module.exports.newDataBase = newDataBase;
 module.exports.populateDirectorsTable = populateDirectorsTable;
