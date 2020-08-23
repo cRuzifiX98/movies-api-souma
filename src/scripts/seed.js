@@ -84,10 +84,13 @@ const uniqueDirectorsObject = function uniqueDirectorsObject(moviesData) {
 const insertContent = function insertContent(directorArray) {
   const promisesArray = directorArray.reduce((promiseAcc, director) => {
     const promise = new Promise((res, rej) => {
-      con.query(`INSERT INTO directorsData(Director_Name) VALUES("${director}")`, (error, result) => {
-        if (error) rej(error);
-        else res(result);
-      });
+      con.query(
+        `INSERT INTO directorsData(Director_Name) VALUES("${director}")`,
+        (error, result) => {
+          if (error) rej(error);
+          else res(result);
+        },
+      );
     });
     promiseAcc.push(promise);
     return promiseAcc;
@@ -106,16 +109,18 @@ const populateDirectorsTable = function populateDirectorsTable(moviesData) {
 };
 // populateDirectorsTable(data);
 
-
 //----------------------------------------------------------------------------------------
 // POPULATE MOVIES TABLE SUB FUNCTIONS
 const getDirId = function getDirId(director) {
   return new Promise((resolve, reject) => {
-    con.query(`SELECT dirId FROM directorsData
-      WHERE directorsData.Director_Name = '${director}'`, (error, result) => {
-      if (error) reject(error);
-      resolve(result[0].dirId);
-    });
+    con.query(
+      `SELECT dirId FROM directorsData
+      WHERE directorsData.Director_Name = '${director}'`,
+      (error, result) => {
+        if (error) reject(error);
+        resolve(result[0].dirId);
+      },
+    );
   });
 };
 const insertData = function insertData(moviesData, table) {
@@ -123,7 +128,8 @@ const insertData = function insertData(moviesData, table) {
     const director = movie.Director;
     const directorId = await getDirId(director);
     return new Promise((resolve, reject) => {
-      con.query(`INSERT INTO ${table} (Rank, Title, Description, Runtime, Genre, Rating, Metascore, Votes, Gross_Earning_in_Mil, Director_Id, Actor, Year)
+      con.query(
+        `INSERT INTO ${table} (Rank, Title, Description, Runtime, Genre, Rating, Metascore, Votes, Gross_Earning_in_Mil, Director_Id, Actor, Year)
         VALUES (${movie.Rank},
         "${movie.Title}",
         "${movie.Description}",
@@ -135,11 +141,13 @@ const insertData = function insertData(moviesData, table) {
         "${movie.Gross_Earning_in_Mil}",
         ${directorId},
         "${movie.Actor}",
-        ${movie.Year})`, (error, result) => {
-        if (error) throw error;
-        console.log(result);
-        resolve();
-      });
+        ${movie.Year})`,
+        (error, result) => {
+          if (error) throw error;
+          console.log(result);
+          resolve();
+        },
+      );
     });
   });
   return Promise.all(promiseArray);
@@ -155,12 +163,16 @@ const populateMoviesTable = function populateMoviessTable(moviesData, table) {
 };
 // populateMoviesTable(data, 'moviesData');
 
-
 const main = async function main() {
   try {
-    await createTable('directorsData', `(dirId INT PRIMARY KEY AUTO_INCREMENT,
-      Director_Name VARCHAR(50) NOT NULL)`);
-    await createTable('moviesData', `(Id INT PRIMARY KEY AUTO_INCREMENT,
+    await createTable(
+      'directorsData',
+      `(dirId INT PRIMARY KEY AUTO_INCREMENT,
+      Director_Name VARCHAR(50) NOT NULL)`,
+    );
+    await createTable(
+      'moviesData',
+      `(Id INT PRIMARY KEY AUTO_INCREMENT,
         Rank INT,
         Title VARCHAR(100) NOT NULL,
         Description TEXT,
@@ -173,7 +185,8 @@ const main = async function main() {
         Director_Id INT,
         Actor VARCHAR(50),
         Year INT,
-        FOREIGN KEY (Director_Id) REFERENCES directorsData(dirId) ON DELETE CASCADE)`);
+        FOREIGN KEY (Director_Id) REFERENCES directorsData(dirId) ON DELETE CASCADE)`,
+    );
     await populateDirectorsTable(data);
     await populateMoviesTable(data, 'moviesData');
   } catch (error) {
